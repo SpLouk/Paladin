@@ -4,8 +4,9 @@ import json
 import os
 import time
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 
 # Login page for Waterloo Quest
 LOGIN_URL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
@@ -22,7 +23,9 @@ FAILURE_XPATH = '//*[@id="win0divDERIVED_REGFRM1_SSR_STATUS_LONG$0"]/div/img[@al
 
 def login_quest(username, password):
   '''Logs into waterloo Quest are returns the webdriver instance of the logged in session'''
-  browser = webdriver.Chrome()
+  chrome_options = Options()
+  chrome_options.add_argument("--headless")
+  browser = webdriver.Chrome(chrome_options=chrome_options)
   browser.get(LOGIN_URL)
   assert 'Quest Home' in browser.title
   browser.find_element_by_name('userid').send_keys(username)
@@ -38,9 +41,9 @@ def handle_new_state(browser):
   The Quest app is inside an iframe which is re-inserted into the DOM after every
   state change. After a change, the webdriver must switch to the new iframe.
   '''
+  time.sleep(0.5)
   browser.switch_to.default_content()
   browser.switch_to.frame(QUEST_IFRAME_ID)
-  time.sleep(0.5)
 
 def click_link(browser, text, partial=False):
   handle_new_state(browser)

@@ -34,6 +34,7 @@ def main():
         res = quest_driver.add_class(credentials.get('username'), credentials.get('password'), lec.get('class_number'))
         if res:
           print 'Success! You are now enrolled in {0}.'.format(lec.get('class_number'))
+          return
         else:
           print 'Could not enroll.'
       else:
