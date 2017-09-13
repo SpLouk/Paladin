@@ -6,12 +6,9 @@ import os
 import requests
 import quest_driver
 
-with open('api_key') as f:
-  API_KEY = f.readline().strip()
-
-def get_course_info(term, subject, course_number):
-  URL = 'https://api.uwaterloo.ca/v2/terms/{term}/{subject}/enrollment.json?key={key}'.format(term=term, subject=subject, key=API_KEY)
-  response = json.loads(requests.get(URL).text)
+def get_course_info(term, subject, course_number, api_key):
+  url = 'https://api.uwaterloo.ca/v2/terms/{term}/{subject}/enrollment.json?key={key}'.format(term=term, subject=subject, key=api_key)
+  response = json.loads(requests.get(url).text)
 
   lectures = []
   for lec in response.get('data'):
@@ -25,15 +22,16 @@ def main():
   parser.add_argument('-s', '--subject', help='School subject', default='CS', required=False)
   parser.add_argument('-n', '--number', help='Course number', required=True)
   parser.add_argument('-e', '--enroll', help='Attempt to enroll if course has openings', action='store_true', default=False)
-  parser.add_argument('-c', '--credentials', help='Login credentials file - must be present if "enroll" is true', required=False)
+  parser.add_argument('-c', '--credentials', help='JSON file with UW API key and Quest login credentials if enroll is true', required=True)
   args = parser.parse_args()
-  lectures = get_course_info(args.term, args.subject, args.number)
 
+  credentials = json.loads(open(os.path.expanduser(args.credentials)).read())
+  lectures = get_course_info(args.term, args.subject, args.number, credentials.get('api_key'))
   for lec in lectures:
     if args.enroll:
       if lec.get('enrollment_total') < lec.get('enrollment_capacity'):
         print 'Attempting to enroll in course {0}.'.format(lec.get('class_number'))
-        res = quest_driver.add_class(os.path.expanduser(args.credentials), lec.get('class_number'))
+        res = quest_driver.add_class(credentials.get('username'), credentials.get('password'), lec.get('class_number'))
         if res:
           print 'Success! You are now enrolled in {0}.'.format(lec.get('class_number'))
         else:
