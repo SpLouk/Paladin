@@ -30,7 +30,7 @@ def login_quest(username, password):
   assert 'Quest' == browser.title
   return browser
 
-def click_link(browser, text, partial=False):
+def handle_new_state(browser):
   '''
   Because Quest is a single page web app, Selenium has trouble determining when a
   new 'state' of the app is finished loading. It runs into trouble when it tries to
@@ -38,9 +38,12 @@ def click_link(browser, text, partial=False):
   The Quest app is inside an iframe which is re-inserted into the DOM after every
   state change. After a change, the webdriver must switch to the new iframe.
   '''
-  time.sleep(0.5)
   browser.switch_to.default_content()
   browser.switch_to.frame(QUEST_IFRAME_ID)
+  time.sleep(0.5)
+
+def click_link(browser, text, partial=False):
+  handle_new_state(browser)
   if partial:
     browser.find_element_by_partial_link_text(text).click()
   else:
@@ -66,23 +69,28 @@ def add_class(quest_username, quest_password, class_num):
   Returns true when it succeeds at enrolling the the class, false otherwise
   '''
   browser = login_quest(quest_username, quest_password)
-  click_link(browser, 'Enroll')
-  click_link(browser, 'add')
-  empty_cart(browser)
+  success = False
+  try:
+    click_link(browser, 'Enroll')
+    click_link(browser, 'add')
+    empty_cart(browser)
 
-  browser.switch_to.default_content()
-  browser.switch_to.frame(QUEST_IFRAME_ID)
-  browser.find_element_by_name(CLASS_NUM_INPUT).send_keys(class_num)
-  browser.find_element_by_link_text('enter').click()
+    handle_new_state(browser)
+    browser.find_element_by_name(CLASS_NUM_INPUT).send_keys(class_num)
+    browser.find_element_by_link_text('enter').click()
 
-  click_link(browser, 'Next')
-  click_link(browser, 'Next')
-  click_link(browser, 'Proceed', True)
-  click_link(browser, 'Finish', True)
-  time.sleep(0.5)
-  browser.switch_to.default_content()
-  browser.switch_to.frame(QUEST_IFRAME_ID)
-  success = len(browser.find_elements_by_xpath(FAILURE_XPATH)) == 0
-  time.sleep(3)
-  browser.quit()
+    click_link(browser, 'Next')
+    click_link(browser, 'Next')
+    click_link(browser, 'Proceed', True)
+    click_link(browser, 'Finish', True)
+    click_link(browser, 'my class schedule')
+    handle_new_state(browser)
+    css = 'span[id^="DERIVED_CLS_DTL_CLASS_NBR"]'
+    for tag in browser.find_elements_by_css_selector(css):
+      if str(class_num) == tag.text:
+        success = True
+  except Exception as e:
+    print e
+  finally:
+    browser.quit()
   return success
