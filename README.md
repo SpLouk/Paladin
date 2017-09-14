@@ -34,17 +34,16 @@ Enrollment: 75/75
 Last Updated: 2017-09-14T13:01:17-04:00
 ```
 
+## Installation
+
+1. Install [Selenium](http://selenium-python.readthedocs.io/installation.html)
+2. Clone this repo `git clone git@github.com:SpLouk/Paladin.git`
+3. run `./class_watch.py --help` to get started
+
+## Auto-Enroll
+
 If you would like to auto enroll in any available section of a given class, use the `-e` option,
 and supply a username and password in your credentials.json file.
-
-Format of credentials.json:
-```
-{
-  "username": "USERID",
-  "password": "XXXX",
-  "api_key": "00000000000000000000000000000000"
-}
-```
 
 Example with auto-enroll:
 ```
@@ -60,4 +59,15 @@ Could not enroll.
 3768 is full.
 Attempting to enroll in course 3769.
 Success! You are now enrolled in 3769.
+```
+
+## Credential File
+
+Format of credentials.json:
+```
+{
+  "username": "USERID",
+  "password": "XXXX",
+  "api_key": "00000000000000000000000000000000"
+}
 ```
