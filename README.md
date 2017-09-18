@@ -11,7 +11,7 @@ for one [here](https://uwaterloo.ca/api/register)
 Example
 
 ```
-./class_lookup.py -s CS -n 350 -c credentials.json
+./paladin.py -s CS -n 350 -c credentials.json
 
 CS 350 (5943)
 Enrollment: 76/75
@@ -38,7 +38,7 @@ Last Updated: 2017-09-14T13:01:17-04:00
 
 1. Install [Selenium](http://selenium-python.readthedocs.io/installation.html)
 2. Clone this repo `git clone git@github.com:SpLouk/Paladin.git`
-3. run `./class_watch.py --help` to get started
+3. run `./paladin.py --help` to get started
 
 ## Auto-Enroll
 
@@ -47,7 +47,7 @@ and supply a username and password in your credentials.json file.
 
 Example with auto-enroll:
 ```
-./class_lookup.py -s ENGL -n 109 -e -c credentials.json 
+./paladin.py -s ENGL -n 109 -e -c credentials.json 
 
 3141 is full.
 Attempting to enroll in course 3763.

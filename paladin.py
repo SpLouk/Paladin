@@ -17,7 +17,7 @@ def get_course_info(term, subject, course_number, api_key):
   return lectures
 
 def main():
-  parser = argparse.ArgumentParser(description='Interact with UW API')
+  parser = argparse.ArgumentParser(description='Pull class info form the UW API. Automatically enroll in classes')
   parser.add_argument('-t', '--term', help='School term', default='1179', required=False)
   parser.add_argument('-s', '--subject', help='School subject', default='CS', required=False)
   parser.add_argument('-n', '--number', help='Course number', required=True)
